@@ -1,0 +1,21 @@
+# Python 3.13 Compatible Requirements with HTTPS support
+# Core Flask
+Flask==3.0.0
+Werkzeug==3.0.1
+requests==2.31.0
+
+# AI APIs
+groq==0.9.0
+google-generativeai==0.3.2
+httpx==0.25.2
+
+# Voice and Audio (Python 3.13 compatible)
+pyttsx3==2.90
+assemblyai>=0.17.0
+websockets>=11.0
+websocket-client>=1.6.0
+soundfile>=0.12.0
+numpy>=1.24.0
+
+# HTTPS Certificate generation
+cryptography>=41.0.0
