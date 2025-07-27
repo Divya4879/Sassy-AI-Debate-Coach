@@ -1,0 +1,18 @@
+# API Keys - NEVER commit these!
+utils/api_keys_config.py
+
+# Python cache
+__pycache__/
+utils/__pycache__/
+
+# Temporary audio files
+temp/*
+static/audio/*
+
+# Audio files
+*.wav
+*.mp3
+
+# OS Files
+.DS_Store
+Thumbs.db
