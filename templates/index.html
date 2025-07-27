@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 <span>Rhetoric Arena</span></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'indigo': {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                            950: '#1e1b4b'
+                        },
+                        'purple': {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                            950: '#3b0764'
+                        },
+                        'pink': {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            200: '#fbcfe8',
+                            300: '#f9a8d4',
+                            400: '#f472b6',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                            950: '#500724'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e1b4b 0%, #3b0764 50%, #500724 100%);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #4f46e5, #7e22ce);
+            border-radius: 20px 20px 5px 20px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        .chat-bubble-ai {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 20px 20px 20px 5px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .pulse-recording {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .theme-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .theme-card.selected {
+            border: 2px solid #c084fc;
+            background: rgba(192, 132, 252, 0.1);
+        }
+        
+        .elegant-button {
+            background: linear-gradient(135deg, #4f46e5, #7e22ce);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        .elegant-button:hover {
+            background: linear-gradient(135deg, #4338ca, #6b21a8);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        }
+        
+        .elegant-input {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .elegant-input:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+            outline: none;
+        }
+        
+        .footer {
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .recording-active {
+            background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+            animation: pulse 1s infinite;
+        }
+
+        .browser-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Browser Info (for debugging) -->
+    <div class="browser-info" id="browser-info" style="display: none;">
+        <div><strong>Browser:</strong> <span id="browser-name"></span></div>
+        <div><strong>Protocol:</strong> <span id="protocol"></span></div>
+        <div><strong>Secure:</strong> <span id="secure-context"></span></div>
+        <div><strong>MediaDevices:</strong> <span id="media-devices"></span></div>
+        <button onclick="document.getElementById('browser-info').style.display='none'" 
+                style="background: #666; border: none; color: white; padding: 2px 6px; border-radius: 3px; margin-top: 5px;">
+            Hide
+        </button>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold mb-2">
+                🎯<span class="bg-gradient-to-r from-purple-300 via-pink-300 to-indigo-300 bg-clip-text text-transparent">Rhetoric Arena</span>
+            </h1>
+
+            <p class="text-lg text-purple-200 italic">Speak your mind and challenge the AI, 
+                because only through resistance do your ideas sharpen and your voice truly grow.</p>
+            
+            <!-- Debug button -->
+            <button onclick="document.getElementById('browser-info').style.display='block'" 
+                    class="mt-2 text-xs text-purple-400 hover:text-purple-300">
+                Show Browser Info (Debug)
+            </button>
+        </div>
+
+        <div id="setup-phase" class="space-y-8">
+            <div class="glass-effect rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-lightbulb mr-3 text-purple-300"></i>
+                    Choose Your Debate Topic
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div class="space-y-3">
+                        <button class="topic-btn w-full p-4 glass-effect rounded-xl hover:bg-indigo-900/50 transition-all" 
+                                data-topic="Pineapple belongs on pizza">
+                            🍕 Pineapple belongs on pizza
+                        </button>
+                        <button class="topic-btn w-full p-4 glass-effect rounded-xl hover:bg-indigo-900/50 transition-all" 
+                                data-topic="Social media does more harm than good">
+                            📱 Social media does more harm than good
+                        </button>
+                        <button class="topic-btn w-full p-4 glass-effect rounded-xl hover:bg-indigo-900/50 transition-all" 
+                                data-topic="Remote work is better than office work">
+                            💻 Remote work is better than office work
+                        </button>
+                    </div>
+                    <div class="space-y-3">
+                        <button class="topic-btn w-full p-4 glass-effect rounded-xl hover:bg-indigo-900/50 transition-all" 
+                                data-topic="Artificial intelligence will replace most jobs">
+                            🤖 AI will replace most jobs
+                        </button>
+                        <button class="topic-btn w-full p-4 glass-effect rounded-xl hover:bg-indigo-900/50 transition-all" 
+                                data-topic="Climate change is the most urgent global issue">
+                            🌍 Climate change is most urgent
+                        </button>
+                        <button class="topic-btn w-full p-4 glass-effect rounded-xl hover:bg-indigo-900/50 transition-all" 
+                                data-topic="Money can buy happiness">
+                            💰 Money can buy happiness
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <input type="text" id="custom-topic" placeholder="Or enter your own topic..." 
+                           class="flex-1 p-4 elegant-input rounded-xl text-white placeholder-purple-300">
+                    <button id="use-custom-topic" class="px-6 py-4 elegant-button rounded-xl">
+                        Use Custom
+                    </button>
+                </div>
+                
+                <div id="selected-topic" class="mt-4 p-4 bg-indigo-900/30 rounded-xl hidden">
+                    <strong>Selected Topic:</strong> <span id="topic-text"></span>
+                </div>
+            </div>
+
+            <div id="side-selection" class="glass-effect rounded-2xl p-8 hidden">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-balance-scale mr-3 text-purple-300"></i>
+                    Choose Your Side
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <button id="side-for" class="side-btn p-6 glass-effect rounded-xl hover:bg-green-700/20 transition-all">
+                        <div class="text-3xl mb-2">✅</div>
+                        <div class="text-xl font-bold">FOR</div>
+                        <div class="text-sm text-purple-200">I support this position</div>
+                    </button>
+                    <button id="side-against" class="side-btn p-6 glass-effect rounded-xl hover:bg-red-700/20 transition-all">
+                        <div class="text-3xl mb-2">❌</div>
+                        <div class="text-xl font-bold">AGAINST</div>
+                        <div class="text-sm text-purple-200">I oppose this position</div>
+                    </button>
+                </div>
+                
+                <div id="selected-side" class="mt-4 p-4 bg-indigo-900/30 rounded-xl hidden">
+                    <strong>Your Position:</strong> <span id="side-text"></span>
+                </div>
+            </div>
+
+            <div id="theme-selection" class="glass-effect rounded-2xl p-8 hidden">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-masks-theater mr-3 text-purple-300"></i>
+                    Choose Your AI Opponent
+                </h2>
+                
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="theme-card glass-effect rounded-xl p-6 text-center" data-theme="sassy">
+                        <div class="text-4xl mb-3">😏</div>
+                        <h3 class="text-lg font-bold mb-2">Sassy Coach</h3>
+                        <p class="text-sm text-purple-200">Witty; roasts you with humor & attitude</p>
+                    </div>
+                    
+                    <div class="theme-card glass-effect rounded-xl p-6 text-center" data-theme="ruthless">
+                        <div class="text-4xl mb-3">⚔️</div>
+                        <h3 class="text-lg font-bold mb-2">Ruthless Veteran</h3>
+                        <p class="text-sm text-purple-200">Cold & intimidating; destroys weak arguments</p>
+                    </div>
+                    
+                    <div class="theme-card glass-effect rounded-xl p-6 text-center" data-theme="sweet">
+                        <div class="text-4xl mb-3">🥰</div>
+                        <h3 class="text-lg font-bold mb-2">Sweet Friend</h3>
+                        <p class="text-sm text-purple-200">Kind & supportive; gently corrects you</p>
+                    </div>
+                    
+                    <div class="theme-card glass-effect rounded-xl p-6 text-center" data-theme="innocent">
+                        <div class="text-4xl mb-3">🌸</div>
+                        <h3 class="text-lg font-bold mb-2">Sweet Angel</h3>
+                        <p class="text-sm text-purple-200">Innocent & soft-spoken; lets you win when right</p>
+                    </div>
+                    
+                    <div class="theme-card glass-effect rounded-xl p-6 text-center" data-theme="bestie">
+                        <div class="text-4xl mb-3">👯</div>
+                        <h3 class="text-lg font-bold mb-2">Your Bestie</h3>
+                        <p class="text-sm text-purple-200">Casual & fun; supports you when you're right</p>
+                    </div>
+                    
+                    <div class="theme-card glass-effect rounded-xl p-6 text-center" data-theme="flirty">
+                        <div class="text-4xl mb-3">😈</div>
+                        <h3 class="text-lg font-bold mb-2">Charming Rival</h3>
+                        <p class="text-sm text-purple-200">Flirty & seductive; playful banter and teasing</p>
+                    </div>
+                    
+                    <div class="theme-card glass-effect rounded-xl p-6 text-center" data-theme="objective">
+                        <div class="text-4xl mb-3">🤖</div>
+                        <h3 class="text-lg font-bold mb-2">Objective AI</h3>
+                        <p class="text-sm text-purple-200">Pure logic, no emotion, just facts</p>
+                    </div>
+                    
+                    <div class="theme-card glass-effect rounded-xl p-6 text-center" data-theme="teacher">
+                        <div class="text-4xl mb-3">👩‍🏫</div>
+                        <h3 class="text-lg font-bold mb-2">Strict Teacher</h3>
+                        <p class="text-sm text-purple-200">Grades your performance, & gives detailed feedback</p>
+                    </div>
+                    
+                    <div class="theme-card glass-effect rounded-xl p-6 text-center" data-theme="philosopher">
+                        <div class="text-4xl mb-3">🧠</div>
+                        <h3 class="text-lg font-bold mb-2">Deep Philosopher</h3>
+                        <p class="text-sm text-purple-200">Questions everything & explores deeper meaning</p>
+                    </div>
+                </div>
+                
+                <div id="selected-theme" class="mt-6 p-4 bg-indigo-900/30 rounded-xl hidden">
+                    <strong>AI Opponent:</strong> <span id="theme-text"></span>
+                </div>
+                
+                <button id="start-debate-btn" class="w-full mt-6 p-4 elegant-button rounded-xl text-xl font-bold transition-all hidden">
+                    ✨ Begin the Debate
+                </button>
+            </div>
+        </div>
+
+        <div id="debate-phase" class="hidden">
+            <div class="glass-effect rounded-2xl p-6 mb-6">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold" id="debate-topic-display"></h2>
+                        <p class="text-purple-200">Your position: <span id="debate-side-display" class="font-semibold"></span></p>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="px-3 py-1 bg-purple-800/50 rounded-full text-sm" id="debate-theme-display"></span>
+                        <button id="reset-debate" class="px-4 py-2 bg-pink-600 hover:bg-pink-700 rounded-lg transition-all">
+                            <i class="fas fa-refresh mr-2"></i>New Debate
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-effect rounded-2xl p-6 mb-6">
+                <div id="chat-container" class="space-y-4 max-h-96 overflow-y-auto mb-6 p-2">
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-center gap-4 p-4 bg-black/20 rounded-xl">
+                        <button id="record-btn" class="flex items-center gap-3 px-6 py-3 elegant-button rounded-xl transition-all">
+                            <i class="fas fa-microphone"></i>
+                            <span>Hold to Record</span>
+                        </button>
+                        <div id="recording-status" class="hidden flex items-center gap-2 text-pink-300">
+                            <div class="w-3 h-3 bg-pink-500 rounded-full pulse-recording"></div>
+                            <span>Recording...</span>
+                        </div>
+                        <button id="play-ai-response" class="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-all hidden">
+                            <i class="fas fa-play"></i>
+                            <span>Play Response</span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <textarea id="argument-input" placeholder="Type your argument here or use voice recording above..." 
+                                  class="flex-1 p-4 elegant-input rounded-xl text-white placeholder-purple-300 resize-none"
+                                  rows="3"></textarea>
+                        <button id="submit-argument" class="px-6 py-4 elegant-button rounded-xl">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer mt-8 py-4 px-6 rounded-xl text-center">
+            <p class="text-purple-200">Made with <span class="text-pink-400">❤</span> by <a href="https://x.com/MysteryChaoskin">Divya</a></p>
+        </footer>
+
+        <div id="loading-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+            <div class="glass-effect rounded-2xl p-8 text-center">
+                <div class="animate-spin w-12 h-12 border-4 border-purple-300 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p class="text-lg">AI is thinking...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Populate browser info for debugging
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('browser-name').textContent = navigator.userAgent;
+            document.getElementById('protocol').textContent = window.location.protocol;
+            document.getElementById('secure-context').textContent = window.isSecureContext ? 'Yes' : 'No';
+            document.getElementById('media-devices').textContent = navigator.mediaDevices ? 'Available' : 'Not Available';
+        });
+    </script>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
